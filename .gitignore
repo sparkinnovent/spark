@@ -1,0 +1,114 @@
+# Credentials / local configuration - never distribute or commit these
+config.php
+install/install.lock
+
+# Logs
+error_log
+*.log
+admin/error_log
+
+# Backups / old versions
+*.bak
+*.zip
+*_bak*
+*-2021.php
+*-2023.php
+*-2023_2.php
+index-2021.php
+index-2023.php
+
+# php.ini files (server specific)
+php.ini
+php*.ini*
+.user.ini
+
+# User uploads & runtime data (keep folder structure, ignore contents)
+#
+# The guards must survive: without them anything written into these directories
+# executes. Git cannot re-include a file whose parent directory is excluded, so
+# ignore the contents with "/*" and un-exclude the directories that hold guards.
+upload/*
+!upload/.gitkeep
+!upload/.htaccess
+!upload/*/
+upload/*/*
+!upload/*/.htaccess
+!upload/*/.gitkeep
+admin/upload/*
+!admin/upload/.gitkeep
+!admin/upload/.htaccess
+admin/download/*
+!admin/download/.gitkeep
+!admin/download/.htaccess
+admin/dist/*
+!admin/dist/.gitkeep
+download/*
+!download/.gitkeep
+!download/.htaccess
+!download/*/
+download/*/*
+!download/*/.htaccess
+!download/*/.gitkeep
+
+# Personal staff photos
+admin/dist/*_photostaff_*.png
+admin/dist/*_linda.jpg
+
+# ---------------------------------------------------------------------------
+# Build output
+#
+# dist/ is NOT build output - it is the AdminLTE asset tree that
+# generate-award.php and generate-cert.php read at runtime (certificate
+# backgrounds, CSS, JS). Never ignore it.
+# ---------------------------------------------------------------------------
+release/
+
+# ---------------------------------------------------------------------------
+# Python environment for the infographic scripts - reinstalled from pip, and
+# 1600 files of it. Never part of the application.
+# ---------------------------------------------------------------------------
+.venv*/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ---------------------------------------------------------------------------
+# Evaluation and analysis artefacts
+#
+# The SUS study and the expert usability work are research material, not
+# application code. The form itself (sus-study.html) and its Apps Script
+# backend (sus-apps-script/) are deliberately NOT ignored - they are part of
+# the study deliverable.
+# ---------------------------------------------------------------------------
+analyze_expert_*.py
+create_*infographic*.py
+create_sus_*.py
+expert-evaluation-*.md
+sus-simulation-*
+simulate-sus-*.js
+
+# Analysis output, by exact name. A blanket *.png / *.csv would also swallow
+# the certificate backgrounds under dist/ and the font tree.
+expert-usability-analysis*
+sus-analysis-*.xlsx
+
+# Database dump - contains every participant record, never tracked
+uitmktco_*.sql
+
+# ---------------------------------------------------------------------------
+# Audit and retirement
+#
+# _audit/ holds the test suites and the bug report - tracked, they are the
+# evidence behind the security work and run in CI. _retired/ is 1.3 GB of
+# superseded files including an archive; it is not tracked, and it must never
+# be deployed.
+# ---------------------------------------------------------------------------
+_retired/
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

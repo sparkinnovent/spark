@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>GDIID 2025 — System Usability Scale (SUS) Study</title>
+<meta name="description" content="Usability study questionnaire (System Usability Scale) for the GDIID 2025 conference management system.">
+<link rel="icon" href="./dist/img/uitm-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap">
+<style>
+  :root{
+    --brand-1:#22b8cf;         /* teal, from the GDIID mark */
+    --brand-2:#7c3aed;         /* violet */
+    --brand-3:#a855f7;
+    --ink:#1e1b2e;
+    --ink-soft:#585268;
+    --line:#e6e2f0;
+    --bg:#f6f4fb;
+    --card:#ffffff;
+    --ok:#12805c;
+    --warn:#b45309;
+    --danger:#b42318;
+    --radius:16px;
+    --shadow:0 1px 2px rgba(30,27,46,.06), 0 12px 32px -18px rgba(30,27,46,.35);
+    --shadow-lg:0 24px 60px -28px rgba(76,29,149,.45);
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%; scroll-behavior:smooth}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 480px at 88% -8%, rgba(124,58,237,.16), transparent 60%),
+      radial-gradient(900px 420px at 2% 0%, rgba(34,184,207,.14), transparent 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:"Source Sans Pro","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+    font-size:16px;
+    line-height:1.55;
+    min-height:100vh;
+  }
+  a{color:#6d28d9}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  .skip-link{position:absolute;left:12px;top:-64px;z-index:100;background:#fff;color:var(--ink);
+    padding:10px 16px;border-radius:10px;box-shadow:var(--shadow);text-decoration:none;font-weight:600}
+  .skip-link:focus{top:12px}
+  .wrap{width:100%;max-width:1000px;margin:0 auto;padding:0 20px}
+
+  /* ---------- Header ---------- */
+  .site-header{
+    position:relative;
+    color:#fff;
+    background:
+      radial-gradient(700px 320px at 85% 10%, rgba(34,184,207,.55), transparent 62%),
+      linear-gradient(118deg,#3b0764 0%,#5b21b6 42%,#7c3aed 72%,#0e7490 130%);
+    overflow:hidden;
+  }
+  .site-header::after{
+    content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.16) 1px, transparent 1px);
+    background-size:22px 22px;opacity:.35;pointer-events:none;
+  }
+  .header-inner{position:relative;z-index:1;display:flex;gap:22px;align-items:center;padding-top:30px;padding-bottom:32px}
+  .brand-logo{
+    flex:0 0 auto;width:86px;height:86px;object-fit:contain;background:#fff;
+    border-radius:18px;padding:6px;box-shadow:0 14px 30px -14px rgba(0,0,0,.6)
+  }
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);
+    padding:6px 12px;border-radius:999px;backdrop-filter:blur(4px)
+  }
+  .site-header h1{margin:.5rem 0 .35rem;font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.15;font-weight:700;letter-spacing:-.02em}
+  .site-header p{margin:0;color:rgba(255,255,255,.9);max-width:62ch;font-size:.98rem}
+  .badge-time{margin-left:auto;align-self:flex-start;white-space:nowrap;font-size:.8rem;font-weight:600;
+    background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);padding:8px 14px;border-radius:999px}
+  .progress-track{position:relative;z-index:1;height:4px;background:rgba(255,255,255,.2)}
+  .progress-track span{display:block;height:100%;width:0;background:linear-gradient(90deg,#67e8f9,#e9d5ff);transition:width .35s ease}
+
+  main{padding:32px 0 64px}
+  .intro{
+    display:grid;grid-template-columns:1fr auto;gap:18px 30px;align-items:center;
+    padding:22px 24px;margin-bottom:24px;
+  }
+  .intro h2{margin:0 0 6px;font-size:1.08rem}
+  .intro p{margin:0;color:var(--ink-soft);font-size:.94rem;max-width:70ch}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0;padding:0;list-style:none}
+  .pills li{font-size:.78rem;font-weight:600;color:#5b21b6;background:#f3e8ff;border:1px solid #e9d5ff;
+    padding:5px 11px;border-radius:999px}
+
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:26px;margin-bottom:22px;
+  }
+  .card-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:20px}
+  .step{
+    flex:0 0 auto;width:34px;height:34px;border-radius:11px;display:grid;place-items:center;
+    font-weight:700;font-size:.95rem;color:#fff;
+    background:linear-gradient(135deg,var(--brand-2),var(--brand-3));
+    box-shadow:0 8px 18px -10px rgba(124,58,237,.9);
+  }
+  .card-head h2{margin:2px 0 3px;font-size:1.12rem;letter-spacing:-.01em}
+  .card-head p{margin:0;color:var(--ink-soft);font-size:.88rem}
+  .card-head .optional{margin-left:auto;font-size:.72rem;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:#7c3aed;background:#f5f3ff;border:1px solid #ede9fe;padding:5px 10px;border-radius:999px}
+
+  /* ---------- Fields ---------- */
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .field{display:flex;flex-direction:column;gap:7px;min-width:0}
+  .field.full{grid-column:1 / -1}
+  .field > label,.field-label{font-weight:600;font-size:.88rem;color:var(--ink)}
+  .hint{font-size:.78rem;color:#7a7488;margin:0}
+  .req{color:#b42318;font-weight:700}
+  input[type=text],input[type=email],select,textarea{
+    width:100%;font:inherit;color:var(--ink);background:#fdfcff;
+    border:1px solid #d9d3e8;border-radius:11px;padding:11px 13px;
+    transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  textarea{resize:vertical;min-height:96px;line-height:1.5}
+  input[type=text]:focus,input[type=email]:focus,select:focus,textarea:focus{
+    outline:3px solid rgba(124,58,237,.18);outline-offset:1px;border-color:#8b5cf6;background:#fff
+  }
+  input[readonly]{background:#f4f1fa;color:#6b6480;cursor:not-allowed;font-variant-numeric:tabular-nums}
+  select{appearance:none;background-image:
+      url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath fill='none' stroke='%236b6480' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round' d='M1 1l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 13px center;padding-right:36px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{position:relative;display:inline-flex}
+  .chip input{position:absolute;opacity:0;width:1px;height:1px}
+  .chip span{
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none;
+    font-size:.85rem;font-weight:600;color:#4b4459;background:#faf9fd;
+    border:1px solid #ddd6ea;border-radius:999px;padding:8px 14px 8px 11px;
+    transition:all .15s ease
+  }
+  .chip span::before{
+    content:"";width:16px;height:16px;border-radius:5px;border:1.6px solid #c3bad7;background:#fff;
+    display:inline-block;flex:0 0 auto;transition:all .15s ease
+  }
+  .chip input:checked + span{background:#f3e8ff;border-color:#a855f7;color:#5b21b6;box-shadow:0 0 0 3px rgba(168,85,247,.12)}
+  .chip input:checked + span::before{
+    background:#7c3aed url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='9' viewBox='0 0 11 9'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M1 4.5L4 7.5 10 1.5'/%3E%3C/svg%3E") center/11px no-repeat;
+    border-color:#7c3aed
+  }
+  .chip input:focus-visible + span{outline:3px solid rgba(124,58,237,.35);outline-offset:2px}
+
+  .consent{display:flex;gap:11px;align-items:flex-start;margin-top:20px;padding:14px 16px;
+    background:#faf8ff;border:1px dashed #d6c9f0;border-radius:12px;font-size:.86rem;color:#4b4459}
+  .consent input{margin-top:3px;width:17px;height:17px;accent-color:#7c3aed;flex:0 0 auto}
+
+  /* ---------- SUS scale ---------- */
+  .scale-legend{
+    display:flex;justify-content:space-between;gap:12px;align-items:center;
+    background:#f7f5fc;border:1px solid #ece7f7;border-radius:12px;
+    padding:10px 16px;margin-bottom:14px;font-size:.8rem;color:#5b5470;font-weight:600
+  }
+  .scale-legend .mid{color:#8b83a3;font-weight:400}
+  .sus-head{
+    display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;
+    padding:0 4px 8px;font-size:.7rem;font-weight:700;letter-spacing:.09em;
+    text-transform:uppercase;color:#8b83a3;border-bottom:1px solid #efeaf9;margin-bottom:6px
+  }
+  .sus-head .opts{display:grid;grid-template-columns:repeat(5,1fr);text-align:center}
+
+  .sus-item{
+    display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px;align-items:center;
+    padding:14px 4px;border-bottom:1px solid #f1edf9
+  }
+  .sus-item:last-of-type{border-bottom:0}
+  .sus-q{display:flex;gap:12px;align-items:flex-start;margin:0;font-size:.95rem;line-height:1.45}
+  .sus-q .num{
+    flex:0 0 auto;width:23px;height:23px;border-radius:7px;display:grid;place-items:center;
+    font-size:.72rem;font-weight:700;color:#6d28d9;background:#f3e8ff;border:1px solid #e9d5ff;margin-top:1px
+  }
+  .sus-q.neg .num{color:#0e7490;background:#e6f7fa;border-color:#c2edf4}
+
+  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;border:0;padding:0;margin:0}
+  .scale label{position:relative;display:block;cursor:pointer}
+  .scale input{position:absolute;opacity:0;width:1px;height:1px}
+  .scale .dot{
+    display:grid;place-items:center;height:40px;border-radius:11px;
+    background:#fbfaff;border:1px solid #e3ddf0;color:#6b6480;
+    font-weight:600;font-size:.9rem;font-variant-numeric:tabular-nums;
+    transition:transform .12s ease, background .15s ease, border-color .15s ease, box-shadow .15s ease
+  }
+  .scale label:hover .dot{border-color:#c4b5fd;background:#f7f3ff}
+  .scale input:checked + .dot{
+    background:linear-gradient(135deg,var(--brand-2),var(--brand-3));
+    border-color:transparent;color:#fff;
+    box-shadow:0 10px 20px -12px rgba(109,40,217,.9);transform:translateY(-1px)
+  }
+  .scale input:focus-visible + .dot{outline:3px solid rgba(124,58,237,.35);outline-offset:2px}
+  .sus-item.invalid{background:#fff7f6;border-radius:12px;box-shadow:inset 0 0 0 1px #fbd4cf;padding-left:10px;padding-right:10px}
+  .sus-item.invalid .dot{border-color:#f3b3ac}
+
+  /* ---------- Recommendation slider ---------- */
+  .slider-wrap{display:flex;align-items:center;gap:16px;margin-top:4px}
+  .slider-wrap input[type=range]{
+    flex:1;appearance:none;height:8px;border-radius:999px;background:#ece7f7;outline:none
+  }
+  .slider-wrap input[type=range]::-webkit-slider-thumb{
+    appearance:none;width:24px;height:24px;border-radius:50%;background:#fff;border:3px solid #7c3aed;
+    box-shadow:0 4px 12px -4px rgba(76,29,149,.6);cursor:pointer
+  }
+  .slider-wrap input[type=range]::-moz-range-thumb{
+    width:20px;height:20px;border-radius:50%;background:#fff;border:3px solid #7c3aed;cursor:pointer
+  }
+  .slider-out{
+    min-width:56px;text-align:center;font-weight:700;font-size:1.05rem;color:#5b21b6;
+    background:#f3e8ff;border:1px solid #e9d5ff;border-radius:10px;padding:6px 10px;
+    font-variant-numeric:tabular-nums
+  }
+
+  /* ---------- Actions ---------- */
+  .actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:flex-end;
+    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);padding:18px 22px;margin-bottom:26px}
+  .actions .status{margin-right:auto;font-size:.84rem;color:#6b6480;display:flex;align-items:center;gap:8px}
+  .dot-live{width:8px;height:8px;border-radius:50%;background:#c3bad7}
+  .dot-live.ready{background:#12b76a;box-shadow:0 0 0 4px rgba(18,183,106,.15)}
+  .btn{
+    font:inherit;font-weight:700;border-radius:11px;border:1px solid transparent;cursor:pointer;
+    padding:12px 22px;display:inline-flex;align-items:center;gap:9px;
+    transition:transform .12s ease, box-shadow .15s ease, background .15s ease;
+    text-decoration:none;line-height:1.2
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{
+    color:#fff;background:linear-gradient(135deg,#5b21b6,#7c3aed 55%,#9333ea);
+    box-shadow:0 14px 26px -14px rgba(91,33,182,.85)
+  }
+  .btn-primary:hover{box-shadow:0 18px 30px -14px rgba(91,33,182,.95)}
+  .btn-primary[disabled]{opacity:.65;cursor:progress;box-shadow:none}
+  .btn-ghost{background:#fff;border-color:#d9d3e8;color:#4b4459}
+  .btn-ghost:hover{border-color:#b9a9dd;background:#fbfaff}
+  .btn svg{width:17px;height:17px;flex:0 0 auto}
+
+  .alert{
+    display:flex;gap:12px;align-items:flex-start;border-radius:12px;padding:14px 16px;
+    font-size:.88rem;margin-bottom:18px;border:1px solid
+  }
+  .alert[hidden]{display:none}
+  .alert-error{background:#fff5f4;border-color:#fbd4cf;color:#8a1c12}
+  .alert-info{background:#f5f9ff;border-color:#cfe4ff;color:#123f77}
+  .alert-warn{background:#fffbeb;border-color:#fde68a;color:#7a4b07}
+  .alert-ok{background:#f0fdf7;border-color:#b8f0d6;color:#0b5f45}
+  .alert strong{display:block;margin-bottom:2px}
+  .alert ul{margin:6px 0 0;padding-left:18px}
+  .alert a{color:inherit;text-decoration:underline}
+
+  /* ---------- Result ---------- */
+  .result{display:none;overflow:hidden;padding:0}
+  .result.show{display:block}
+  .result-top{
+    color:#fff;padding:28px 26px;
+    background:radial-gradient(600px 260px at 90% 0%, rgba(34,184,207,.4), transparent 60%),
+               linear-gradient(120deg,#3b0764,#5b21b6 60%,#7c3aed)
+  }
+  .result-top .kicker{font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;opacity:.78}
+  .result-score{display:flex;align-items:flex-end;gap:14px;margin:8px 0 4px;flex-wrap:wrap}
+  .result-score .big{font-size:3.4rem;font-weight:700;line-height:.95;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .result-score .outof{font-size:.9rem;opacity:.8;padding-bottom:8px}
+  .result-score .grade{
+    margin-left:auto;font-size:.8rem;font-weight:700;letter-spacing:.04em;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);
+    border-radius:999px;padding:8px 14px;align-self:center
+  }
+  .gauge{margin-top:18px}
+  .gauge-track{position:relative;height:12px;border-radius:999px;background:rgba(255,255,255,.2);overflow:visible}
+  .gauge-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#fca5a5,#fcd34d,#86efac);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+  .gauge-marker{position:absolute;top:50%;width:18px;height:18px;border-radius:50%;background:#fff;
+    border:4px solid #5b21b6;transform:translate(-50%,-50%);transition:left .7s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 2px 8px rgba(0,0,0,.35)}
+  .gauge-scale{display:flex;justify-content:space-between;font-size:.7rem;opacity:.75;margin-top:6px;letter-spacing:.04em}
+  .result-body{padding:24px 26px 26px}
+  .stat-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:#faf9fd;border:1px solid #ece7f7;border-radius:12px;padding:12px 14px}
+  .stat .k{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#8b83a3;margin-bottom:4px}
+  .stat .v{font-weight:700;font-size:.98rem;color:var(--ink)}
+  .result-body p{margin:0 0 14px;color:var(--ink-soft);font-size:.9rem}
+  .result-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px}
+  details.item-scores{margin-top:6px;border-top:1px solid #f1edf9;padding-top:14px}
+  details.item-scores summary{cursor:pointer;font-size:.84rem;font-weight:600;color:#6d28d9}
+  .score-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:.82rem}
+  .score-table th,.score-table td{text-align:left;padding:7px 8px;border-bottom:1px solid #f1edf9}
+  .score-table th{font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:#8b83a3}
+  .score-table td:last-child,.score-table th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+
+  footer.site-footer{padding:0 0 48px;color:#6b6480;font-size:.8rem}
+  footer.site-footer .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between;align-items:center}
+  footer a{color:#5b21b6}
+
+  @media (max-width:820px){
+    .header-inner{flex-wrap:wrap;padding-top:24px;padding-bottom:26px}
+    .brand-logo{width:64px;height:64px;border-radius:14px}
+    .badge-time{margin-left:0;order:3}
+    .intro{grid-template-columns:1fr}
+    .grid{grid-template-columns:1fr}
+    .sus-head{display:none}
+    .sus-item{grid-template-columns:1fr;gap:12px;padding:16px 0}
+    .sus-item .scale{gap:6px}
+    .scale .dot{height:44px}
+    .card{padding:20px}
+    .stat-grid{grid-template-columns:1fr}
+    .actions{justify-content:stretch}
+    .actions .status{width:100%;margin-bottom:2px}
+    .actions .btn{flex:1 1 auto;justify-content:center}
+    .result-score .grade{margin-left:0}
+  }
+  @media (max-width:420px){
+    .scale .dot{font-size:.82rem;border-radius:9px}
+    .wrap{padding:0 14px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+  }
+  @media print{
+    body{background:#fff}
+    .site-header .badge-time,.actions,.result-actions,.skip-link,footer.site-footer{display:none!important}
+    .card{box-shadow:none;border-color:#ccc;break-inside:avoid}
+    .result-top{background:#f3e8ff!important;color:#3b0764!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .result-score .grade{color:#3b0764;border-color:#c4b5fd;background:#ede9fe}
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to questionnaire</a>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <img class="brand-logo" src="./dist/img/logo_2025.jpg" alt="GDIID 2025 logo"
+         onerror="this.style.display='none'">
+    <div>
+      <span class="eyebrow">
+        <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M6 3.4v3.2l2 1.2" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        GDIID 2025 &middot; Usability Study
+      </span>
+      <h1>System Usability Scale (SUS)</h1>
+      <p>Help us improve the GDIID conference system. This short questionnaire measures how easy the system is to use — there are no right or wrong answers.</p>
+    </div>
+    <span class="badge-time">&#9201; About 3 minutes</span>
+  </div>
+  <div class="progress-track" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+
+<main id="main" class="wrap">
+
+  <section class="intro card" aria-labelledby="introTitle">
+    <div>
+      <h2 id="introTitle">Before you begin</h2>
+      <p>Complete the tasks given by the study facilitator first (for example: sign in, upload payment proof, submit a presentation link). Then answer based on your experience with <strong>this system only</strong>, not with other conference websites.</p>
+      <ul class="pills">
+        <li>10 statements</li>
+        <li>5-point scale</li>
+        <li>Anonymous participant ID</li>
+        <li>Results saved to a secure study sheet</li>
+      </ul>
+    </div>
+    <div aria-hidden="true" style="display:grid;place-items:center;width:96px;height:96px;border-radius:24px;background:linear-gradient(135deg,#f3e8ff,#e6f7fa);border:1px solid #e9d5ff">
+      <svg width="46" height="46" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+        <rect x="6" y="10" width="36" height="26" rx="4" stroke="#7c3aed" stroke-width="2.2"/>
+        <path d="M14 38h20" stroke="#22b8cf" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M15 24l6 5 12-11" stroke="#22b8cf" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <form id="susForm" novalidate autocomplete="on">
+
+    <!-- ============ STEP 1 ============ -->
+    <section class="card" aria-labelledby="step1Title">
+      <div class="card-head">
+        <span class="step" aria-hidden="true">1</span>
+        <div>
+          <h2 id="step1Title">About you</h2>
+          <p>Used only to group the results. Your name and email are optional.</p>
+        </div>
+        <span class="optional">Optional details</span>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="participantId">Participant ID</label>
+          <input type="text" id="participantId" name="participantId" readonly
+                 aria-describedby="pidHint">
+          <p class="hint" id="pidHint">Generated automatically. Quote this ID if you contact the secretariat.</p>
+        </div>
+
+        <div class="field">
+          <label for="role">Your role <span class="req" aria-hidden="true">*</span></label>
+          <select id="role" name="role" required>
+            <option value="" selected disabled>Select your role…</option>
+            <option>Participant / Presenter</option>
+            <option>Conference administrator</option>
+            <option>Secretariat committee</option>
+            <option>Reviewer / Evaluator</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="discipline">Field of expertise <span class="req" aria-hidden="true">*</span></label>
+          <select id="discipline" name="discipline" required>
+            <option value="" selected disabled>Select your field…</option>
+            <option>Science &amp; Technology</option>
+            <option>Social Science</option>
+            <option>Other / Interdisciplinary</option>
+          </select>
+          <p class="hint">Used to compare results between disciplines.</p>
+        </div>
+
+        <div class="field">
+          <label for="fullName">Full name</label>
+          <input type="text" id="fullName" name="fullName" maxlength="120"
+                 placeholder="e.g. Nur Aisyah binti Ahmad" autocomplete="name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email address</label>
+          <input type="email" id="email" name="email" maxlength="160"
+                 placeholder="you@example.com" autocomplete="email">
+          <p class="hint">Only if you are happy to be contacted about the study.</p>
+        </div>
+
+        <div class="field">
+          <label for="device">Device used for the tasks</label>
+          <select id="device" name="device">
+            <option value="" selected disabled>Select device…</option>
+            <option>Desktop / laptop</option>
+            <option>Tablet</option>
+            <option>Smartphone</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="experience">Experience with GDIID</label>
+          <select id="experience" name="experience">
+            <option value="" selected disabled>Select experience…</option>
+            <option>First time using GDIID</option>
+            <option>Used once before</option>
+            <option>Regular user (multiple events)</option>
+            <option>Committee / administrator</option>
+          </select>
+        </div>
+
+        <div class="field full">
+          <span class="field-label" id="modulesLabel">Which parts of the system did you test?</span>
+          <div class="chips" role="group" aria-labelledby="modulesLabel">
+            <label class="chip"><input type="checkbox" name="modules" value="Sign in / registration"><span>Sign in &amp; registration</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Payment proof upload"><span>Payment proof</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Presentation submission"><span>Presentation video</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Extended abstract"><span>Extended abstract</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Letter of Acceptance"><span>LOA download</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Certificate"><span>Certificate</span></label>
+            <label class="chip"><input type="checkbox" name="modules" value="Admin dashboard"><span>Admin dashboard</span></label>
+          </div>
+          <p class="hint">Select all that apply.</p>
+        </div>
+      </div>
+
+      <label class="consent" for="consent">
+        <input type="checkbox" id="consent" name="consent" required>
+        <span>I agree that my responses may be used in aggregate to improve the GDIID system. I understand my participation is voluntary and anonymous. <span class="req" aria-hidden="true">*</span></span>
+      </label>
+    </section>
+
+    <!-- ============ STEP 2 ============ -->
+    <section class="card" id="susSection" aria-labelledby="step2Title">
+      <div class="card-head">
+        <span class="step" aria-hidden="true">2</span>
+        <div>
+          <h2 id="step2Title">Your impression of the system</h2>
+          <p>For each statement, choose how strongly you agree or disagree. Answer all 10 statements.</p>
+        </div>
+      </div>
+
+      <div class="scale-legend" aria-hidden="true">
+        <span>1 &middot; Strongly disagree</span>
+        <span class="mid">3 &middot; Neutral</span>
+        <span>5 &middot; Strongly agree</span>
+      </div>
+
+      <div class="sus-head" aria-hidden="true">
+        <div>Statement</div>
+        <div class="opts">
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+        </div>
+      </div>
+
+      <!-- Statements are injected by JS from SUS_ITEMS to keep wording in one place. -->
+      <div id="susItems"></div>
+
+      <div id="susAlert" class="alert alert-error" role="alert" hidden></div>
+    </section>
+
+    <!-- ============ STEP 3 ============ -->
+    <section class="card" aria-labelledby="step3Title">
+      <div class="card-head">
+        <span class="step" aria-hidden="true">3</span>
+        <div>
+          <h2 id="step3Title">In your own words</h2>
+          <p>Optional, but the most useful feedback for the development team.</p>
+        </div>
+        <span class="optional">Optional</span>
+      </div>
+
+      <div class="grid">
+        <div class="field full">
+          <label for="recommend">How likely are you to recommend GDIID to a colleague?</label>
+          <div class="slider-wrap">
+            <input type="range" id="recommend" name="recommend" min="0" max="10" step="1" value="8"
+                   aria-describedby="recommendScale">
+            <output class="slider-out" id="recommendOut" for="recommend">8</output>
+          </div>
+          <div class="hint" id="recommendScale" style="display:flex;justify-content:space-between">
+            <span>0 &middot; Not at all likely</span><span>10 &middot; Extremely likely</span>
+          </div>
+        </div>
+
+        <div class="field full">
+          <label for="liked">What worked well?</label>
+          <textarea id="liked" name="liked" maxlength="1200"
+                    placeholder="Things that felt easy, clear, or fast…"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="improve">What should we improve?</label>
+          <textarea id="improve" name="improve" maxlength="1200"
+                    placeholder="Anything confusing, slow, or missing…"></textarea>
+        </div>
+
+        <div class="field full">
+          <label for="comments">Anything else?</label>
+          <textarea id="comments" name="comments" maxlength="800" style="min-height:70px"
+                    placeholder="Optional"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <div id="submitAlert" class="alert alert-error" role="alert" hidden></div>
+
+    <div class="actions">
+      <div class="status">
+        <span class="dot-live" id="statusDot" aria-hidden="true"></span>
+        <span id="statusText">0 of 10 statements answered</span>
+      </div>
+      <button type="reset" class="btn btn-ghost" id="resetBtn">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4v6h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 15a8 8 0 1 0 1.9-8.4L4 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Clear form
+      </button>
+      <button type="submit" class="btn btn-primary" id="submitBtn">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="submitLabel">Submit response</span>
+      </button>
+    </div>
+  </form>
+
+  <!-- ============ RESULT ============ -->
+  <section class="card result" id="result" aria-labelledby="resultTitle" tabindex="-1">
+    <div class="result-top">
+      <div class="kicker">System Usability Scale result</div>
+      <div class="result-score">
+        <span class="big" id="resultScore">0</span>
+        <span class="outof">/ 100</span>
+        <span class="grade" id="resultGrade">—</span>
+      </div>
+      <h2 id="resultTitle" style="margin:2px 0 0;font-size:1rem;font-weight:600">—</h2>
+      <div class="gauge" aria-hidden="true">
+        <div class="gauge-track">
+          <div class="gauge-fill" id="gaugeFill" style="width:0%"></div>
+          <div class="gauge-marker" id="gaugeMarker" style="left:0%"></div>
+        </div>
+        <div class="gauge-scale"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+      </div>
+    </div>
+    <div class="result-body">
+      <div class="stat-grid">
+        <div class="stat"><div class="k">Adjective rating</div><div class="v" id="statAdjective">—</div></div>
+        <div class="stat"><div class="k">Acceptability</div><div class="v" id="statAcceptability">—</div></div>
+        <div class="stat"><div class="k">Participant ID</div><div class="v" id="statPid" style="font-size:.85rem;word-break:break-all">—</div></div>
+      </div>
+      <p id="resultNote"></p>
+      <details class="item-scores">
+        <summary>See how each statement was scored</summary>
+        <table class="score-table">
+          <thead><tr><th scope="col">#</th><th scope="col">Statement</th><th scope="col">Rating</th><th scope="col">Points</th></tr></thead>
+          <tbody id="scoreTableBody"></tbody>
+        </table>
+      </details>
+      <div class="result-actions">
+        <button type="button" class="btn btn-ghost" id="downloadCsv">Download my result (CSV)</button>
+        <button type="button" class="btn btn-ghost" id="retryBtn" hidden>Retry sending</button>
+        <button type="button" class="btn btn-primary" id="newResponse">Start a new response</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>GDIID 2025 usability study &middot; System Usability Scale &copy; Digital Equipment Corporation, 1986. Free to use for research.</span>
+    <span>Questions? <a href="mailto:secretariatgdiid@uitm.edu.my">secretariatgdiid@uitm.edu.my</a></span>
+  </div>
+</footer>
+
+<noscript>
+  <div class="wrap" style="padding-bottom:40px">
+    <div class="alert alert-warn"><div><strong>JavaScript is required.</strong> This questionnaire needs JavaScript to score the SUS responses and send them to the study sheet.</div></div>
+  </div>
+</noscript>
+
+<script>
+/* =====================================================================
+ * CONFIGURATION
+ * Paste the Google Apps Script Web App URL (ending in /exec) below.
+ * Deployment steps: see sus-apps-script/README.md
+ * ===================================================================== */
+const CONFIG = {
+  endpoint: "",                    // e.g. "https://script.google.com/macros/s/AKfy.../exec"
+  formVersion: "1.0",
+  storagePrefix: "gdiid_sus_"
+};
+
+/* Standard SUS statements — odd = positive, even = negative. */
+const SUS_ITEMS = [
+  "I think that I would like to use this system frequently.",
+  "I found the system unnecessarily complex.",
+  "I thought the system was easy to use.",
+  "I think that I would need the support of a technical person to be able to use this system.",
+  "I found the various functions in this system were well integrated.",
+  "I thought there was too much inconsistency in this system.",
+  "I would imagine that most people would learn to use this system very quickly.",
+  "I found the system very cumbersome to use.",
+  "I felt very confident using the system.",
+  "I needed to learn a lot of things before I could get going with this system."
+];
+
+const SCALE_LABELS = ["Strongly disagree", "Disagree", "Neutral", "Agree", "Strongly agree"];
+
+const form = document.getElementById("susForm");
+const susItemsEl = document.getElementById("susItems");
+const susAlert = document.getElementById("susAlert");
+const submitAlert = document.getElementById("submitAlert");
+const resultEl = document.getElementById("result");
+const progressBar = document.getElementById("progressBar");
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+const submitBtn = document.getElementById("submitBtn");
+const submitLabel = document.getElementById("submitLabel");
+const retryBtn = document.getElementById("retryBtn");
+
+const STORE_KEY = CONFIG.storagePrefix + "draft";
+const PENDING_KEY = CONFIG.storagePrefix + "pending";
+let startedAt = Date.now();
+let lastPayload = null;
+
+/* ------------------------------------------------------------------ */
+/* Build the 10 statement rows                                        */
+/* ------------------------------------------------------------------ */
+function buildStatements() {
+  const frag = document.createDocumentFragment();
+  SUS_ITEMS.forEach(function (text, i) {
+    const n = i + 1;
+    const negative = n % 2 === 0;
+    const row = document.createElement("div");
+    row.className = "sus-item";
+    row.dataset.item = String(n);
+
+    const q = document.createElement("p");
+    q.className = "sus-q" + (negative ? " neg" : "");
+    const num = document.createElement("span");
+    num.className = "num";
+    num.setAttribute("aria-hidden", "true");
+    num.textContent = String(n);
+    const txt = document.createElement("span");
+    txt.textContent = text;
+    q.appendChild(num);
+    q.appendChild(txt);
+
+    const fieldset = document.createElement("fieldset");
+    fieldset.className = "scale";
+    const legend = document.createElement("legend");
+    legend.className = "sr-only";
+    legend.textContent = "Statement " + n + ": " + text;
+    fieldset.appendChild(legend);
+
+    for (let v = 1; v <= 5; v++) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "sus" + n;
+      input.value = String(v);
+      input.required = true;
+      input.id = "sus" + n + "_" + v;
+      input.setAttribute("aria-label", v + " — " + SCALE_LABELS[v - 1]);
+
+      const dot = document.createElement("span");
+      dot.className = "dot";
+      dot.setAttribute("aria-hidden", "true");
+      dot.textContent = String(v);
+
+      label.appendChild(input);
+      label.appendChild(dot);
+      fieldset.appendChild(label);
+    }
+
+    row.appendChild(q);
+    row.appendChild(fieldset);
+    frag.appendChild(row);
+  });
+  susItemsEl.appendChild(frag);
+}
+buildStatements();
+
+/* ------------------------------------------------------------------ */
+/* Participant ID                                                     */
+/* ------------------------------------------------------------------ */
+function makeParticipantId() {
+  const d = new Date();
+  const pad = (v) => String(v).padStart(2, "0");
+  const stamp = String(d.getFullYear()).slice(2) + pad(d.getMonth() + 1) + pad(d.getDate());
+  let rand = "";
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  for (let i = 0; i < 4; i++) rand += chars[Math.floor(Math.random() * chars.length)];
+  return "GDIID-SUS-" + stamp + "-" + rand;
+}
+
+function ensureParticipantId() {
+  const field = document.getElementById("participantId");
+  let id = "";
+  try { id = localStorage.getItem(CONFIG.storagePrefix + "pid") || ""; } catch (e) {}
+  if (!id || !/^GDIID-SUS-\d{6}-[A-Z0-9]{4}$/.test(id)) {
+    id = makeParticipantId();
+    try { localStorage.setItem(CONFIG.storagePrefix + "pid", id); } catch (e) {}
+  }
+  field.value = id;
+}
+ensureParticipantId();
+
+/* ------------------------------------------------------------------ */
+/* Scoring                                                            */
+/* ------------------------------------------------------------------ */
+function computeSus(raw) {
+  if (!Array.isArray(raw) || raw.length !== 10 || raw.some(function (v) { return !v; })) return null;
+  let total = 0;
+  raw.forEach(function (v, i) {
+    total += (i % 2 === 0) ? (v - 1) : (5 - v);
+  });
+  return Math.round(total * 2.5 * 10) / 10;
+}
+
+function gradeFor(score) {
+  if (score >= 84.1) return "A+";
+  if (score >= 80.8) return "A";
+  if (score >= 78.9) return "A-";
+  if (score >= 77.2) return "B+";
+  if (score >= 74.1) return "B";
+  if (score >= 72.6) return "B-";
+  if (score >= 71.1) return "C+";
+  if (score >= 65.0) return "C";
+  if (score >= 62.7) return "C-";
+  if (score >= 51.7) return "D";
+  return "F";
+}
+
+function adjectiveFor(score) {
+  if (score >= 85.1) return "Excellent";
+  if (score >= 71.1) return "Good";
+  if (score >= 51.7) return "Fair";
+  return "Poor";
+}
+
+function acceptabilityFor(score) {
+  if (score >= 71.1) return "Acceptable";
+  if (score >= 51.7) return "Marginal";
+  return "Not acceptable";
+}
+
+function collectRaw() {
+  const fd = new FormData(form);
+  const raw = [];
+  for (let i = 1; i <= 10; i++) {
+    const v = fd.get("sus" + i);
+    raw.push(v ? Number(v) : null);
+  }
+  return raw;
+}
+
+/* ------------------------------------------------------------------ */
+/* Progress + live state                                              */
+/* ------------------------------------------------------------------ */
+function updateProgress() {
+  const raw = collectRaw();
+  const answered = raw.filter(function (v) { return v; }).length;
+  statusText.textContent = answered + " of 10 statements answered";
+  statusDot.classList.toggle("ready", answered === 10);
+
+  const requiredOk =
+    document.getElementById("role").value !== "" &&
+    document.getElementById("discipline").value !== "" &&
+    document.getElementById("consent").checked;
+  const pct = Math.round(((answered / 10) * 0.85 + (requiredOk ? 0.15 : 0)) * 100);
+  progressBar.style.width = Math.min(100, pct) + "%";
+}
+
+form.addEventListener("input", function (e) {
+  if (e.target.type === "range") {
+    document.getElementById("recommendOut").textContent = e.target.value;
+  }
+  if (e.target.name && /^sus\d+$/.test(e.target.name)) {
+    const row = e.target.closest(".sus-item");
+    if (row) row.classList.remove("invalid");
+    if (susAlert.hidden === false) susAlert.hidden = true;
+  }
+  updateProgress();
+  saveDraft();
+});
+form.addEventListener("change", function () {
+  updateProgress();
+  saveDraft();
+});
+updateProgress();
+
+/* ------------------------------------------------------------------ */
+/* Draft autosave                                                     */
+/* ------------------------------------------------------------------ */
+let saveTimer = null;
+let submissionDone = false;
+function saveDraft() {
+  clearTimeout(saveTimer);
+  if (submissionDone) return;
+  saveTimer = setTimeout(function () {
+    if (submissionDone) return;
+    try {
+      const fd = new FormData(form);
+      const data = {};
+      fd.forEach(function (value, key) {
+        if (key === "modules") {
+          data.modules = data.modules || [];
+          data.modules.push(value);
+        } else if (key === "consent") {
+          data.consent = true;
+        } else {
+          data[key] = value;
+        }
+      });
+      data.recommend = document.getElementById("recommend").value;
+      data.savedAt = new Date().toISOString();
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+    } catch (e) { /* private mode — ignore */ }
+  }, 250);
+}
+
+function restoreDraft() {
+  let data = null;
+  try { data = JSON.parse(localStorage.getItem(STORE_KEY) || "null"); } catch (e) {}
+  if (!data) return;
+
+  const setValue = function (id, value) {
+    const el = document.getElementById(id);
+    if (el && value !== undefined && value !== null) el.value = value;
+  };
+  setValue("fullName", data.fullName);
+  setValue("email", data.email);
+  // Guard against a stale draft pointing at an option that no longer exists.
+  ["role", "discipline", "device", "experience"].forEach(function (key) {
+    if (!data[key]) return;
+    const el = document.getElementById(key);
+    if (!el) return;
+    const exists = Array.prototype.some.call(el.options, function (o) { return o.value === data[key]; });
+    if (exists) el.value = data[key];
+  });
+  setValue("liked", data.liked);
+  setValue("improve", data.improve);
+  setValue("comments", data.comments);
+
+  if (Array.isArray(data.modules)) {
+    document.querySelectorAll('input[name="modules"]').forEach(function (cb) {
+      cb.checked = data.modules.indexOf(cb.value) !== -1;
+    });
+  }
+  for (let i = 1; i <= 10; i++) {
+    const v = data["sus" + i];
+    if (v) {
+      const input = document.querySelector('input[name="sus' + i + '"][value="' + v + '"]');
+      if (input) input.checked = true;
+    }
+  }
+  const rec = document.getElementById("recommend");
+  if (data.recommend !== undefined) {
+    rec.value = data.recommend;
+    document.getElementById("recommendOut").textContent = rec.value;
+  }
+  if (data.consent) document.getElementById("consent").checked = true;
+  updateProgress();
+}
+restoreDraft();
+
+/* ------------------------------------------------------------------ */
+/* Validation                                                         */
+/* ------------------------------------------------------------------ */
+function showAlert(el, html) {
+  el.innerHTML = html;
+  el.hidden = false;
+}
+
+function validateForm() {
+  const problems = [];
+
+  const role = document.getElementById("role");
+  if (!role.value) {
+    problems.push("Please select your role.");
+    role.setAttribute("aria-invalid", "true");
+  } else {
+    role.removeAttribute("aria-invalid");
+  }
+
+  const discipline = document.getElementById("discipline");
+  if (discipline && !discipline.value) {
+    problems.push("Please select your field of expertise.");
+    discipline.setAttribute("aria-invalid", "true");
+  } else if (discipline) {
+    discipline.removeAttribute("aria-invalid");
+  }
+
+  if (!document.getElementById("consent").checked) {
+    problems.push("Please confirm your consent to take part.");
+  }
+
+  const raw = collectRaw();
+  const missing = [];
+  raw.forEach(function (v, i) {
+    const row = susItemsEl.querySelector('.sus-item[data-item="' + (i + 1) + '"]');
+    if (!v) {
+      missing.push(i + 1);
+      if (row) row.classList.add("invalid");
+    } else if (row) {
+      row.classList.remove("invalid");
+    }
+  });
+  if (missing.length) {
+    problems.push("Please rate statement" + (missing.length > 1 ? "s " : " ") +
+      missing.join(", ") + ".");
+  }
+
+  return { problems: problems, missing: missing };
+}
+
+/* ------------------------------------------------------------------ */
+/* Payload                                                            */
+/* ------------------------------------------------------------------ */
+function buildPayload() {
+  const fd = new FormData(form);
+  const raw = collectRaw();
+  const score = computeSus(raw);
+  const modules = fd.getAll("modules");
+
+  const itemScores = raw.map(function (v, i) {
+    return (i % 2 === 0) ? (v - 1) : (5 - v);
+  });
+
+  return {
+    formVersion: CONFIG.formVersion,
+    submissionId: "SUB-" + Date.now().toString(36).toUpperCase() + "-" +
+      Math.random().toString(36).slice(2, 6).toUpperCase(),
+    participantId: document.getElementById("participantId").value,
+    submittedAt: new Date().toISOString(),
+    name: (fd.get("fullName") || "").toString().trim(),
+    email: (fd.get("email") || "").toString().trim(),
+    role: fd.get("role") || "",
+    discipline: fd.get("discipline") || "",
+    device: fd.get("device") || "",
+    experience: fd.get("experience") || "",
+    modules: modules,
+    sus: raw,
+    itemScores: itemScores,
+    score: score,
+    grade: score === null ? "" : gradeFor(score),
+    adjective: score === null ? "" : adjectiveFor(score),
+    acceptability: score === null ? "" : acceptabilityFor(score),
+    recommend: Number(fd.get("recommend")),
+    liked: (fd.get("liked") || "").toString().trim(),
+    improve: (fd.get("improve") || "").toString().trim(),
+    comments: (fd.get("comments") || "").toString().trim(),
+    durationSeconds: Math.max(0, Math.round((Date.now() - startedAt) / 1000)),
+    pageUrl: location.href,
+    userAgent: navigator.userAgent,
+    language: navigator.language || "",
+    timezone: (function () {
+      try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) { return ""; }
+    })()
+  };
+}
+
+/* ------------------------------------------------------------------ */
+/* Submission                                                         */
+/* ------------------------------------------------------------------ */
+function endpointConfigured() {
+  return typeof CONFIG.endpoint === "string" &&
+    /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(CONFIG.endpoint.trim());
+}
+
+function setBusy(busy) {
+  submitBtn.disabled = busy;
+  submitLabel.textContent = busy ? "Sending…" : "Submit response";
+}
+
+async function sendPayload(payload) {
+  const res = await fetch(CONFIG.endpoint.trim(), {
+    method: "POST",
+    headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(payload),
+    redirect: "follow"
+  });
+  const text = await res.text();
+  let json = null;
+  try { json = JSON.parse(text); } catch (e) { /* non-JSON response */ }
+  if (!res.ok) throw new Error("Server returned HTTP " + res.status);
+  if (json && json.ok === false) throw new Error(json.error || "The server rejected the response.");
+  return json;
+}
+
+function pendingList() {
+  try { return JSON.parse(localStorage.getItem(PENDING_KEY) || "[]") || []; } catch (e) { return []; }
+}
+function savePending(payload) {
+  try {
+    const list = pendingList();
+    list.push(payload);
+    localStorage.setItem(PENDING_KEY, JSON.stringify(list));
+  } catch (e) {}
+}
+function removePending(submissionId) {
+  try {
+    const list = pendingList().filter(function (p) {
+      return p.submissionId !== submissionId;
+    });
+    localStorage.setItem(PENDING_KEY, JSON.stringify(list));
+  } catch (e) {}
+}
+
+form.addEventListener("submit", async function (e) {
+  e.preventDefault();
+  submitAlert.hidden = true;
+
+  const check = validateForm();
+  if (check.problems.length) {
+    showAlert(submitAlert,
+      "<div><strong>Please check the form.</strong><ul>" +
+      check.problems.map(function (p) { return "<li>" + p + "</li>"; }).join("") +
+      "</ul></div>");
+    submitAlert.scrollIntoView({ behavior: "smooth", block: "center" });
+    const firstInvalid = susItemsEl.querySelector(".sus-item.invalid");
+    if (firstInvalid && check.missing.length) {
+      const input = firstInvalid.querySelector("input");
+      if (input) input.focus({ preventScroll: true });
+    } else {
+      document.getElementById("role").focus({ preventScroll: true });
+    }
+    return;
+  }
+
+  const payload = buildPayload();
+  lastPayload = payload;
+
+  if (!endpointConfigured()) {
+    // Preview mode — the result is shown locally but nothing is stored remotely.
+    renderResult(payload, {
+      status: "preview",
+      message: "Preview only. Set CONFIG.endpoint in this file to your Google Apps Script URL so responses are saved."
+    });
+    return;
+  }
+
+  setBusy(true);
+  try {
+    const json = await sendPayload(payload);
+    submissionDone = true;
+    clearTimeout(saveTimer);
+    removePending(payload.submissionId);
+    try { localStorage.removeItem(STORE_KEY); } catch (e) {}
+    renderResult(payload, { status: "saved", server: json });
+  } catch (err) {
+    // Only this response should sit in the queue, even after several retries.
+    removePending(payload.submissionId);
+    savePending(payload);
+    renderResult(payload, {
+      status: "unconfirmed",
+      message: "We could not confirm that your response was saved (" + err.message +
+        "). It is kept on this device — please press “Retry sending” or hand the device to the facilitator."
+    });
+  } finally {
+    setBusy(false);
+  }
+});
+
+/* Retry queued responses */
+retryBtn.addEventListener("click", async function () {
+  if (!endpointConfigured()) return;
+  retryBtn.disabled = true;
+  retryBtn.textContent = "Retrying…";
+  const list = pendingList();
+  let ok = 0;
+  const stillQueued = [];
+  for (const item of list) {
+    try {
+      await sendPayload(item);
+      ok++;
+    } catch (e) {
+      stillQueued.push(item);
+    }
+  }
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(stillQueued)); } catch (e) {}
+  if (stillQueued.length === 0) {
+    retryBtn.hidden = true;
+    document.getElementById("resultNote").innerHTML =
+      "<strong>Saved.</strong> Your response reached the study sheet.";
+  } else {
+    retryBtn.disabled = false;
+    retryBtn.textContent = "Retry sending";
+    document.getElementById("resultNote").innerHTML =
+      "<strong>Still not saved.</strong> " + ok + " of " + list.length +
+      " queued response(s) were sent. Check the connection and try again, or download the CSV and email it to the facilitator.";
+  }
+});
+
+/* ------------------------------------------------------------------ */
+/* Result rendering                                                   */
+/* ------------------------------------------------------------------ */
+function renderResult(payload, meta) {
+  const score = payload.score;
+
+  document.getElementById("resultScore").textContent = String(score);
+  document.getElementById("resultGrade").textContent = payload.grade;
+  document.getElementById("resultTitle").textContent =
+    payload.acceptability === "Acceptable"
+      ? "This system is likely usable as it is."
+      : payload.acceptability === "Marginal"
+        ? "Usability is borderline — targeted fixes would help."
+        : "Usability needs significant improvement.";
+
+  document.getElementById("statAdjective").textContent = payload.adjective;
+  document.getElementById("statAcceptability").textContent = payload.acceptability;
+  document.getElementById("statPid").textContent = payload.participantId;
+
+  const pct = Math.max(0, Math.min(100, score));
+  document.getElementById("gaugeFill").style.width = pct + "%";
+  document.getElementById("gaugeMarker").style.left = pct + "%";
+
+  const tbody = document.getElementById("scoreTableBody");
+  tbody.innerHTML = "";
+  payload.sus.forEach(function (rating, i) {
+    const tr = document.createElement("tr");
+    const cells = [
+      String(i + 1),
+      SUS_ITEMS[i],
+      String(rating) + " (" + SCALE_LABELS[rating - 1] + ")",
+      String(payload.itemScores[i])
+    ];
+    cells.forEach(function (text, idx) {
+      const td = document.createElement(idx === 0 ? "th" : "td");
+      if (idx === 0) td.setAttribute("scope", "row");
+      td.textContent = text;
+      if (idx === 3) td.style.fontWeight = "700";
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+
+  const note = document.getElementById("resultNote");
+  let noteHtml = "";
+  if (meta.status === "saved") {
+    noteHtml = "<strong>Thank you — your response was saved.</strong> " +
+      "A score above 68 is generally considered above average; the industry average is about 68.";
+    retryBtn.hidden = true;
+  } else if (meta.status === "preview") {
+    noteHtml = "<strong>Preview mode.</strong> " + meta.message +
+      " You can still download your result below.";
+    retryBtn.hidden = true;
+  } else {
+    noteHtml = "<strong>Response kept on this device.</strong> " + meta.message;
+    retryBtn.hidden = false;
+  }
+  note.innerHTML = noteHtml;
+
+  const alertBox = document.getElementById("submitAlert");
+  alertBox.hidden = true;
+
+  resultEl.classList.add("show");
+  resultEl.focus({ preventScroll: true });
+  resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ------------------------------------------------------------------ */
+/* CSV download                                                       */
+/* ------------------------------------------------------------------ */
+function csvCell(value) {
+  const s = String(value === undefined || value === null ? "" : value);
+  return '"' + s.replace(/"/g, '""').replace(/\r?\n/g, " ") + '"';
+}
+
+document.getElementById("downloadCsv").addEventListener("click", function () {
+  if (!lastPayload) return;
+  const p = lastPayload;
+  const rows = [
+    ["Field", "Value"],
+    ["Participant ID", p.participantId],
+    ["Submission ID", p.submissionId],
+    ["Submitted at", p.submittedAt],
+    ["Name", p.name],
+    ["Email", p.email],
+    ["Role", p.role],
+    ["Device", p.device],
+    ["Experience", p.experience],
+    ["Modules tested", p.modules.join("; ")],
+    ["SUS score", p.score],
+    ["Grade", p.grade],
+    ["Adjective", p.adjective],
+    ["Acceptability", p.acceptability],
+    ["Likelihood to recommend", p.recommend]
+  ];
+  p.sus.forEach(function (v, i) {
+    rows.push(["SUS " + (i + 1) + " — " + SUS_ITEMS[i], v]);
+  });
+  rows.push(["What worked well", p.liked]);
+  rows.push(["What to improve", p.improve]);
+  rows.push(["Other comments", p.comments]);
+
+  const csv = rows.map(function (r) {
+    return r.map(csvCell).join(",");
+  }).join("\r\n");
+
+  const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = p.participantId + "-sus-result.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+});
+
+/* ------------------------------------------------------------------ */
+/* Reset / new response                                               */
+/* ------------------------------------------------------------------ */
+document.getElementById("newResponse").addEventListener("click", function () {
+  resetForm(true);
+  resultEl.classList.remove("show");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("resetBtn").addEventListener("click", function (e) {
+  e.preventDefault();
+  if (window.confirm("Clear your answers and start again?")) resetForm(false);
+});
+
+function resetForm(newParticipant) {
+  form.reset();
+  susItemsEl.querySelectorAll(".sus-item.invalid").forEach(function (el) {
+    el.classList.remove("invalid");
+  });
+  susAlert.hidden = true;
+  submitAlert.hidden = true;
+  document.getElementById("recommendOut").textContent =
+    document.getElementById("recommend").value;
+  try {
+    localStorage.removeItem(STORE_KEY);
+    if (newParticipant) localStorage.removeItem(CONFIG.storagePrefix + "pid");
+  } catch (e) {}
+  // form.reset() blanks the readonly field, so re-apply (or mint) the ID.
+  ensureParticipantId();
+  startedAt = Date.now();
+  lastPayload = null;
+  submissionDone = false;
+  updateProgress();
+}
+
+/* ------------------------------------------------------------------ */
+/* Warn before leaving with unsaved answers                           */
+/* ------------------------------------------------------------------ */
+let allowLeave = false;
+window.addEventListener("beforeunload", function (e) {
+  if (allowLeave) return;
+  const raw = collectRaw();
+  const answered = raw.filter(Boolean).length;
+  if (answered > 0 && !resultEl.classList.contains("show")) {
+    e.preventDefault();
+    e.returnValue = "";
+  }
+});
+window.addEventListener("pagehide", function () { allowLeave = true; });
+</script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+# Protect the installer.
+#
+# install/index.php refuses to run once config.php exists, but that check lives in
+# PHP. This adds the same rule at the server: the wizard is reachable only while
+# there is no config.php, i.e. only on a fresh deployment.
+#
+# The root .htaccess blocks /install/ entirely on production hosts. This is the
+# second lock, for setups where the root rules are lost or merged differently.
+
+<FilesMatch "\.(sql|lock)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # If config.php exists, kill every request under install/.
+    RewriteCond %{DOCUMENT_ROOT}/config.php -f
+    RewriteRule ^ - [F,L]
+</IfModule>
+
+Options -Indexes

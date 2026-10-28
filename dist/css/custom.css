@@ -1,0 +1,12 @@
+.bg-purple {
+
+    background-color: #FF5722 !important; /* Your custom background color */
+
+    color: #fff !important;
+
+}
+
+.info-box .progress-description {
+    white-space: normal;
+    word-break: break-word;
+}

@@ -1,0 +1,73 @@
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php7_module>
+   php_flag display_errors Off
+   php_value max_execution_time 650
+   php_value max_input_time 650
+   php_value max_input_vars 3000
+   php_value memory_limit 256M
+   php_value post_max_size 256M
+   php_value session.gc_maxlifetime 1440
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
+   php_value upload_max_filesize 128M
+   php_flag zlib.output_compression On
+</IfModule>
+<IfModule lsapi_module>
+   php_flag display_errors Off
+   php_value max_execution_time 650
+   php_value max_input_time 650
+   php_value max_input_vars 3000
+   php_value memory_limit 256M
+   php_value post_max_size 256M
+   php_value session.gc_maxlifetime 1440
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
+   php_value upload_max_filesize 128M
+   php_flag zlib.output_compression On
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
+Options -Indexes
+
+# ---------------------------------------------------------------------------
+# FIX L1 / L2 / L3 - files that must never be served
+# ---------------------------------------------------------------------------
+
+# L1: the PHP error log sat in the web root and Apache served it as text. It
+# leaked absolute paths, the session save path and full SQL errors.
+<FilesMatch "^(error_log|php_errors?\.log|.*\.log)$">
+    Require all denied
+</FilesMatch>
+
+# L2: backup, archive and pre-fix copies of the application. Several were
+# complete old portals with their own unpatched handlers.
+<FilesMatch "\.(bak|old|orig|save|swp|swo|zip|tar|gz|tgz|rar|7z|sql|ini|log)$">
+    Require all denied
+</FilesMatch>
+<FilesMatch "\.(php|inc)~$">
+    Require all denied
+</FilesMatch>
+
+# The cPanel-generated php.ini backups and the .htaccess copies.
+<FilesMatch "^(\.htaccess-.*|\.user-.*|php.*\.ini.*|htaccess\.zip)$">
+    Require all denied
+</FilesMatch>
+
+# L3: the installer writes config.php and can re-create the admin account.
+# It self-locks, but it must not be reachable at all on a live host.
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^install/ - [F,L]
+</IfModule>
+
+# L2 - the retired-file archive must never be served.
+<IfModule mod_rewrite.c>
+    RewriteRule ^_retired/ - [F,L]
+</IfModule>
+
+# config.php holds the database and SMTP credentials. Apache executes .php
+# rather than serving it, so this was not a leak - but a handler misconfiguration
+# could expose it, and nothing legitimate requests it by URL.
+<FilesMatch "^config(\.sample)?\.php$">
+    Require all denied
+</FilesMatch>

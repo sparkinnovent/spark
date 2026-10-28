@@ -1,0 +1,21 @@
+# Deny execution of any script in this upload directory.
+# Uploads are data, never code. Blocks C2 (RCE via crafted extension).
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php8.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Anything that looks executable is refused outright.
+    RewriteRule \.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp|htaccess)$ - [F,L,NC]
+</IfModule>
+<FilesMatch "\.(php[0-9]?|phtml|phar|pl|py|cgi|sh|asp|aspx|jsp|htaccess)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI
+AddType text/plain .php .phtml .phar .pl .py .cgi .sh
