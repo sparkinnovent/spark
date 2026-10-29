@@ -2,6 +2,14 @@
 # Manual editing of this file may result in unexpected behavior.
 # To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
 # For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+#
+# FIX - session.save_path was pinned to /var/cpanel/php/sessions/ea-php73.
+# This application requires PHP 8.0+, so on any PHP 8 host that directory does
+# not exist. session_start() then failed silently, $_SESSION stayed empty, and
+# the installer's "Install now" button did nothing at all - it posted, the
+# session lookup came back empty, and the same page rendered again with no
+# error. The directive is removed rather than repointed: PHP's compiled-in
+# default already matches the running version, which is what we want.
 <IfModule php7_module>
    php_flag display_errors Off
    php_value max_execution_time 650
@@ -10,7 +18,6 @@
    php_value memory_limit 256M
    php_value post_max_size 256M
    php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
    php_value upload_max_filesize 128M
    php_flag zlib.output_compression On
 </IfModule>
@@ -22,7 +29,6 @@
    php_value memory_limit 256M
    php_value post_max_size 256M
    php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php73"
    php_value upload_max_filesize 128M
    php_flag zlib.output_compression On
 </IfModule>
@@ -53,10 +59,18 @@ Options -Indexes
     Require all denied
 </FilesMatch>
 
-# L3: the installer writes config.php and can re-create the admin account.
-# It self-locks, but it must not be reachable at all on a live host.
+# L3: the installer writes config.php and can re-create the admin account, so
+# it must not be reachable once the site is live.
+#
+# FIX - this rule was an unconditional "RewriteRule ^install/ - [F,L]", which
+# blocked the installer on a fresh deployment too. Nobody could ever install.
+# The installer is only dangerous while config.php does not exist, so the block
+# is conditional on exactly that. install/.htaccess carries the same rule for
+# hosts where this file is lost or merged differently.
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    RewriteCond %{DOCUMENT_ROOT}/config.php -f
     RewriteRule ^install/ - [F,L]
 </IfModule>
 

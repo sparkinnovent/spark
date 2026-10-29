@@ -108,14 +108,21 @@ check('index.php escapes ?format=', !$raw, $raw ? 'payload found unescaped' : ''
 echo "\n--- L3: installer must not be reachable ---\n";
 
 /*
- * The installer lock is enforced by .htaccess (RewriteRule ^install/ - [F,L]),
- * which the PHP built-in server ignores entirely. Assert the rule is present in
- * the shipped config rather than asserting HTTP behaviour that this server
- * cannot reproduce.
+ * The installer lock is enforced by .htaccess, which the PHP built-in server
+ * ignores entirely. Assert the rule is present in the shipped config rather
+ * than asserting HTTP behaviour this server cannot reproduce.
+ *
+ * FIX - the rule used to be unconditional, which made a fresh deployment
+ * impossible: /install/ was denied before the operator could ever reach it.
+ * It must now be gated on config.php, so the installer works exactly once.
  */
 $htaccess = @file_get_contents(__DIR__ . '/../.htaccess');
 check('the install directory is denied in .htaccess',
     $htaccess !== false && preg_match('#RewriteRule\s+\^install/\s+-\s+\[F,L\]#', $htaccess) === 1);
+check('the install denial is gated on config.php, not unconditional',
+    $htaccess !== false
+    && preg_match('#RewriteCond\s+%\{DOCUMENT_ROOT\}/config\.php\s+-f\s*\r?\n\s*RewriteRule\s+\^install/#', $htaccess) === 1,
+    'an unconditional rule makes the installer unreachable on a fresh deploy');
 check('error_log is denied in .htaccess',
     $htaccess !== false && str_contains($htaccess, '<FilesMatch "^(error_log'));
 check('backup and archive files are denied in .htaccess',
@@ -128,9 +135,19 @@ check('the retired archive is denied in .htaccess',
     $htaccess !== false && str_contains($htaccess, 'RewriteRule ^_retired/ - [F,L]'));
 
 /*
+ * session.save_path must not be pinned to a version-specific directory. It was
+ * set to /var/cpanel/php/sessions/ea-php73, which does not exist on a PHP 8
+ * host; session_start() then failed silently and the installer's final button
+ * did nothing. This application requires PHP 8.0+.
+ */
+check('.htaccess does not pin session.save_path to a PHP version',
+    $htaccess !== false && !preg_match('#php_value\s+session\.save_path#', $htaccess),
+    'a hard-coded save_path breaks sessions when the PHP version differs');
+
+/*
  * install/ ships in the package but must only be reachable on a fresh deploy.
- * Two locks: the root rewrite blocks the path outright on production, and
- * install/.htaccess kills it once config.php exists.
+ * Two locks: the root rewrite blocks the path once config.php exists, and
+ * install/.htaccess carries the same rule.
  */
 $installHt = @file_get_contents(__DIR__ . '/../install/.htaccess');
 check('install/.htaccess exists', $installHt !== false && $installHt !== '');
@@ -141,6 +158,36 @@ check('install/.htaccess is conditional on config.php existing',
 check('install/.htaccess does not block a fresh install outright',
     $installHt !== false && !str_contains($installHt, 'RewriteRule ^index'),
     'an unconditional rule would make the installer unreachable');
+
+/* ------------------------------------------------------------------ */
+echo "\n--- installer: the final button must never fail silently ---\n";
+
+/*
+ * The "Install now" button posts step=3 and expects the settings to be waiting
+ * in $_SESSION. If the session is gone the handler used to fall through with no
+ * else branch: the same "Ready to install" page rendered again, no error, no
+ * change, nothing in the log. It looked like a dead button.
+ *
+ * A POST with no session must now say so and send the operator back to the form.
+ */
+$r = req("$base/install/index.php", ['method' => 'POST', 'post' => ['step' => '3']]);
+check('a step-3 POST with no session is not silently ignored',
+    str_contains($r['body'], 'class="error"'),
+    'no error was rendered - the button would look dead');
+check('a step-3 POST with no session explains the cause',
+    str_contains($r['body'], 'session'),
+    'the message must name the session, not just fail');
+check('a step-3 POST with no session returns to the settings form',
+    str_contains($r['body'], 'name="db_host"'),
+    'it must not re-render the confirmation page');
+check('a step-3 POST with no session does not claim success',
+    !str_contains($r['body'], 'Installation complete'));
+
+// The requirements page must report session health before the form is filled in.
+$r = req("$base/install/index.php");
+check('the requirements page checks that sessions work',
+    str_contains($r['body'], 'PHP session usable'),
+    'a dead session was only discovered after the whole form was submitted');
 
 /*
  * Every directory that receives an upload must carry its own guard. The build

@@ -13,10 +13,23 @@
  */
 
 declare(strict_types=1);
-session_start();
 
+/*
+ * FIX - error_reporting used to be set AFTER session_start(), so a failed
+ * session start produced no visible warning. On cPanel the .htaccess forced
+ * session.save_path to a PHP 7.3 directory; on a PHP 8 host that path does not
+ * exist, session_start() failed silently, $_SESSION stayed empty, and the
+ * "Install now" button did nothing at all. Turn errors on first.
+ */
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
+
+if (session_status() === PHP_SESSION_NONE) {
+    @session_start();
+}
+
+// A dead session makes step 3 a silent no-op, so surface it here instead.
+$sessionOk = session_status() === PHP_SESSION_ACTIVE;
 
 define('APP_VERSION', '1.0.0');
 
@@ -84,6 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === '2') {
         if (!$conn) {
             $errors[] = 'Database connection failed: ' . mysqli_connect_error();
         } else {
+            mysqli_close($conn);
+
+            /*
+             * FIX - assigning $_SESSION does not prove the session persisted.
+             * With a dead session (unwritable save_path) the array is set in
+             * memory, the page advances to "Ready to install", and the next POST
+             * finds nothing. Write, then read back.
+             */
             $_SESSION['install'] = [
                 'db_host' => $db_host, 'db_name' => $db_name,
                 'db_user' => $db_user, 'db_pass' => $db_pass,
@@ -98,8 +119,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === '2') {
                 'app_url' => $app_url_in,
                 'recaptcha_secret' => trim($_POST['recaptcha_secret'] ?? ''),
             ];
-            mysqli_close($conn);
-            $step = '3'; // proceed to confirmation
+
+            // Verify the session actually started - assigning to $_SESSION
+            // succeeds even when there is no session, because it is just an
+            // array in memory. Only session_status() tells the truth.
+            if (session_status() !== PHP_SESSION_ACTIVE) {
+                $errors[] = 'The server accepted your settings but could not start a PHP session, '
+                    . 'so the next step would silently do nothing. '
+                    . 'Check that session.save_path exists and is writable '
+                    . '(cPanel > MultiPHP INI Editor), or ask your host to fix it.';
+            } else {
+                $step = '3'; // proceed to confirmation
+            }
         }
     }
 
@@ -108,7 +139,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === '2') {
     }
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === '3' && !empty($_SESSION['install'])) {
+/*
+ * FIX - this branch used to require !empty($_SESSION['install']) with no else.
+ * If the session had expired or never started, the POST fell through to the
+ * render block, which saw $step === '3' and printed the same "Ready to install"
+ * page again. The button looked dead: no error, no change, nothing in the log.
+ * A missing session is now an explicit, visible failure.
+ */
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['step'] ?? '') === '3') {
+    if (empty($_SESSION['install'])) {
+        $errors[] = 'Your installation session expired before the settings were saved. '
+            . 'This usually means PHP could not write session data - check that '
+            . 'session.save_path exists and is writable, then enter the settings again.';
+        $step = '2';
+    }
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST'
+    && ($_POST['step'] ?? '') === '3'
+    && !empty($_SESSION['install'])) {
     $c = $_SESSION['install'];
 
     // Defensive: a session created before the site/captcha fields were added
@@ -261,6 +310,15 @@ if (!in_array($step, ['locked', 'done'], true)) {
         $checks[] = ['Writable folder: ' . $dir . '/', is_writable($rootPath . '/' . $dir)];
     }
     $checks[] = ['Writable application root (for config.php)', is_writable($rootPath)];
+
+    /*
+     * FIX - the session store was never checked. The installer carries the
+     * database credentials from step 2 to step 3 in $_SESSION, so a dead session
+     * makes "Install now" a silent no-op. Catch it before the operator fills in
+     * the whole form, not after.
+     */
+    $checks[] = ['PHP session usable (save_path: ' . (ini_get('session.save_path') ?: 'default') . ')',
+        $sessionOk];
 }
 $checksPassed = !in_array(false, array_column($checks, 1), true);
 

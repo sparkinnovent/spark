@@ -42,8 +42,24 @@ composer install
 5. The installer writes `config.php`, imports `install/schema.sql`, creates the
    super-admin, and locks itself with `install/install.lock`.
 6. **Delete `install/`** once it reports success. It refuses to run again while
-   `config.php` exists, but it has no business sitting on a live host.
+   `config.php` exists, and `.htaccess` blocks the directory from that moment on,
+   but it has no business sitting on a live host.
 7. Sign in at `admin/login.php`.
+
+### If the "Install now" button does nothing
+
+The installer carries your database credentials from step 2 to step 3 in the PHP
+session. If PHP cannot write session data, the settings are lost between the two
+pages: the button posts, the handler finds an empty session, and the same page
+comes back with no error at all.
+
+The requirements page now checks this up front — look for **PHP session usable**
+and the `save_path` it prints. If that line fails, the cause is almost always a
+`session.save_path` in `.htaccess` pointing at a directory that does not exist
+for the PHP version you are running. Earlier releases pinned it to
+`/var/cpanel/php/sessions/ea-php73`, which breaks on any PHP 8 host; the directive
+is gone, so PHP uses the path compiled in for the running version. Fix it in
+cPanel → MultiPHP INI Editor rather than by hand.
 
 ### Manual installation
 
