@@ -322,6 +322,27 @@ if (!in_array($step, ['locked', 'done'], true)) {
 }
 $checksPassed = !in_array(false, array_column($checks, 1), true);
 
+/*
+ * Work out the URL the operator is actually using, so the "Public URL" field
+ * arrives pre-filled instead of empty. Most installs are at the document root
+ * and this is correct as-is; the operator can still edit it. If the installer
+ * sits in a subdirectory, the install/ segment is stripped.
+ */
+$detectedUrl = '';
+if (!empty($_SERVER['HTTP_HOST'])) {
+    $https  = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+        || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https')
+        || ((int)($_SERVER['SERVER_PORT'] ?? 0) === 443);
+    $scheme = $https ? 'https' : 'http';
+    $host   = preg_replace('/[^A-Za-z0-9\.\-:\[\]]/', '', (string)$_SERVER['HTTP_HOST']);
+
+    $dir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
+    $dir = preg_replace('#/install$#', '', $dir);   // drop the installer segment
+    $dir = rtrim($dir, '/');
+
+    $detectedUrl = $scheme . '://' . $host . $dir;
+}
+
 function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!DOCTYPE html>
@@ -341,10 +362,21 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
   .sub { color:#64748b; margin:0 0 1.5rem; font-size:.95rem; }
   h2 { font-size:1.05rem; margin:1.5rem 0 .75rem; border-bottom:2px solid var(--bg); padding-bottom:.4rem; }
   label { display:block; font-weight:600; font-size:.85rem; margin:.9rem 0 .3rem; }
-  input[type=text], input[type=email], input[type=password] {
-    width:100%; padding:.6rem .75rem; border:1px solid #cbd5e1; border-radius:8px; font-size:.95rem;
+  /*
+   * FIX - input[type=url] was missing from this list, so the "Public URL of this
+   * installation" field rendered with the browser's raw default styling: no
+   * padding, no full width, no rounded border. Every other field was styled.
+   * Select on the input element instead of enumerating types, so a new field
+   * cannot fall out of the design again.
+   */
+  input[type=text], input[type=email], input[type=password], input[type=url], input[type=tel] {
+    width:100%; padding:.6rem .75rem; border:1px solid #cbd5e1; border-radius:8px;
+    font-size:.95rem; font-family:inherit; background:#fff; color:inherit;
   }
   input:focus { outline:2px solid var(--brand); border-color:var(--brand); }
+  input::placeholder { color:#94a3b8; }
+  .hint a { color:var(--brand); text-decoration:none; font-weight:600; }
+  .hint a:hover { text-decoration:underline; }
   .row { display:grid; grid-template-columns:1fr 1fr; gap:0 1rem; }
   @media (max-width:560px){ .row { grid-template-columns:1fr; } }
   .btn { display:inline-block; background:var(--brand); color:#fff; border:none; border-radius:8px;
@@ -468,13 +500,23 @@ function h($s) { return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
         <div class="row">
           <div>
             <label for="app_url">Public URL of this installation</label>
-            <input type="url" id="app_url" name="app_url" value="<?= h($_POST['app_url'] ?? '') ?>" placeholder="https://gdiid.uitmkt.com">
-            <p class="hint">No trailing slash. Password-reset links are built from this.</p>
+            <input type="url" id="app_url" name="app_url"
+                   value="<?= h($_POST['app_url'] ?? $detectedUrl) ?>"
+                   placeholder="https://conference.example.com"
+                   inputmode="url" autocomplete="url" spellcheck="false"
+                   pattern="https?://.+">
+            <p class="hint">Full address, no trailing slash. Password-reset links are built from this.</p>
           </div>
           <div>
             <label for="recaptcha_secret">reCAPTCHA v2 secret key</label>
-            <input type="text" id="recaptcha_secret" name="recaptcha_secret" value="<?= h($_POST['recaptcha_secret'] ?? '') ?>">
-            <p class="hint">The secret key, not the site key. Leave blank to disable captcha.</p>
+            <input type="text" id="recaptcha_secret" name="recaptcha_secret"
+                   value="<?= h($_POST['recaptcha_secret'] ?? '') ?>"
+                   autocomplete="off" spellcheck="false" placeholder="6LcXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX">
+            <p class="hint">
+              The <strong>secret</strong> key, not the site key. Leave blank to disable captcha.
+              Get one at
+              <a href="https://www.google.com/recaptcha/admin/create" target="_blank" rel="noopener noreferrer">google.com/recaptcha/admin/create</a>.
+            </p>
           </div>
         </div>
 

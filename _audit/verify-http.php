@@ -189,6 +189,48 @@ check('the requirements page checks that sessions work',
     str_contains($r['body'], 'PHP session usable'),
     'a dead session was only discovered after the whole form was submitted');
 
+/* ------------------------------------------------------------------ */
+echo "\n--- installer: the settings form must be usable ---\n";
+
+$r = req("$base/install/index.php?step=2");
+$form = $r['body'];
+
+/*
+ * input[type=url] was absent from the CSS rule that styles every other field,
+ * so the Public URL box rendered with the browser's raw default: no padding,
+ * no full width, no rounded border. Assert both the field and its styling.
+ */
+check('the Public URL field is present', str_contains($form, 'name="app_url"'));
+check('the Public URL field is a url input', str_contains($form, 'type="url" id="app_url"'));
+check('the stylesheet covers url inputs',
+    preg_match('#input\[type=url\]#', $form) === 1,
+    'an unstyled url input renders as a bare browser box');
+
+// Pre-filled from the request, so the operator does not retype their own host.
+$appUrlValue = '';
+if (preg_match('#id="app_url"\s+name="app_url"\s+value="([^"]*)"#', $form, $m)) {
+    $appUrlValue = $m[1];
+}
+check('the Public URL field is pre-filled', $appUrlValue !== '',
+    'an empty field means the operator must type a value the server already knows');
+check('the pre-filled URL is absolute', (bool)preg_match('#^https?://#', $appUrlValue), $appUrlValue);
+check('the pre-filled URL has no trailing slash', !str_ends_with($appUrlValue, '/'), $appUrlValue);
+check('the pre-filled URL has no install segment', !str_contains($appUrlValue, '/install'), $appUrlValue);
+
+// The captcha field needs a route to Google's console, or the operator is stuck.
+check('the captcha field links to the reCAPTCHA admin console',
+    str_contains($form, 'https://www.google.com/recaptcha/admin/create'));
+check('the captcha link opens in a new tab without leaking the opener',
+    (bool)preg_match('#href="https://www\.google\.com/recaptcha/admin/create"[^>]*rel="noopener noreferrer"#', $form));
+check('the captcha hint still distinguishes secret from site key',
+    str_contains($form, 'not the site key'));
+
+// A pre-filled value must never be trusted into the markup unescaped.
+$r = req("$base/install/index.php?step=2");
+check('the form does not reflect a raw angle bracket',
+    !str_contains($form, '"><script'),
+    'host header injection would break out of the value attribute');
+
 /*
  * Every directory that receives an upload must carry its own guard. The build
  * script once preserved .htaccess and then deleted the folder holding it, which

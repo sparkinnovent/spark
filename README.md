@@ -33,11 +33,17 @@ composer install
 
    | Step | What it asks for |
    |---|---|
-   | 1 | Server requirements — `upload/`, `admin/upload/` and `admin/dist/` must be writable |
+   | 1 | Server requirements — `upload/`, `admin/upload/` and `admin/dist/` must be writable, and PHP sessions must work |
    | 2 | Database connection and the first super-admin account |
    | 3 | Public URL and reCAPTCHA secret |
    | 4 | SMTP settings (optional, editable later) |
    | 5 | Confirmation |
+
+   The **Public URL** field is pre-filled from the address you reached the
+   installer on, so you only need to correct it if the site sits behind a proxy
+   or a different public hostname. The **reCAPTCHA secret** field links straight
+   to <https://www.google.com/recaptcha/admin/create>; leave it blank to run
+   without a captcha.
 
 5. The installer writes `config.php`, imports `install/schema.sql`, creates the
    super-admin, and locks itself with `install/install.lock`.
